@@ -9,8 +9,11 @@ The author does not encourage or support unauthorized access, interception, or m
 
 Misuse of this software may violate local, national, or international laws.
 
-## learning objective
-1.Understand how packet sniffing works at the network layer
-2.Learn how monitor mode operates in wireless adapters
-3.Explore how protocols like HTTP, HTTPS, and TLS transmit data
-4.Understand ethical considerations in network security testing
+## 🎯 Learning Objectives
+
+- Understand how packet sniffing works at the network layer
+- Learn how monitor mode operates in wireless adapters
+- Explore how protocols like HTTP, HTTPS, and TLS transmit data
+- Understand ethical considerations in network security testing
+- Practice building GUI-based networking tools using Python and Tkinter
+
