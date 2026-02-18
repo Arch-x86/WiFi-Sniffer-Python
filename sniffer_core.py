@@ -46,3 +46,15 @@ def parse_packet(pkt) -> dict:
             rec["dst"] = arp.pdst
             rec["info"] = f"{'Request' if arp.op == 1 else 'Reply'}: {arp.psrc} → {arp.pdst}"
             return rec
+        if pkt.haslayer(IP):
+            ip = pkt[IP]
+            rec["src"] = ip.src
+            rec["dst"] = ip.dst
+
+            if pkt.haslayer(TCP):
+                tcp = pkt[TCP]
+                rec["protocol"] = "TCP"
+                rec["sport"] = tcp.sport
+                rec["dport"] = tcp.dport
+                flags = "+".join(v for k, v in TCP_FLAGS.items() if k in str(tcp.flags))
+                rec["flags"] = flags
