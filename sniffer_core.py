@@ -21,4 +21,28 @@ SERVICES = {
 
 TCP_FLAGS = {"F": "FIN", "S": "SYN", "R": "RST", "P": "PSH", "A": "ACK", "U": "URG"}
 
+def parse_packet(pkt) -> dict:
+    """Convert a raw Scapy packet into a plain dict."""
+    now = datetime.now(timezone.utc).strftime("%H:%M:%S.%f")[:-3]
+    rec = {
+        "time": now,
+        "protocol": "OTHER",
+        "src": "",
+        "dst": "",
+        "sport": None,
+        "dport": None,
+        "length": len(pkt),
+        "flags": "",
+        "service": "",
+        "info": "",
+    }
 
+    try:
+        # ARP
+        if pkt.haslayer(ARP):
+            arp = pkt[ARP]
+            rec["protocol"] = "ARP"
+            rec["src"] = arp.psrc
+            rec["dst"] = arp.pdst
+            rec["info"] = f"{'Request' if arp.op == 1 else 'Reply'}: {arp.psrc} → {arp.pdst}"
+            return rec
