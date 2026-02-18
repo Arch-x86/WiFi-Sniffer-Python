@@ -18,6 +18,18 @@ A python-based tool to sniff the packet transmitting over the network.
 
 ## Quick Start
 
+```bash
+# clone the repo
+git clone https://github.com/Arch-x86/WiFi-Sniffer-Python.git
+cd WiFi-Sniffer-Python
+
+# install required libraries
+pip install -r requirements.txt
+
+# run the applicaiton
+python3 main.py
+```
+
 
 ## Author
 - **Ankit Thebe** - Initial Demonstration
