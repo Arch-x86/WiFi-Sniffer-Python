@@ -161,6 +161,18 @@ class Sniffer:
             self.queue.put_nowait(rec)
         except queue.Full:
             self.dropped += 1
-            
 
+def get_interfaces() -> list[str]:
+    """Return list of available network interface names."""
+    if SCAPY_OK:
+        try:
+            from scapy.all import get_if_list
+            return get_if_list()
+        except Exception:
+            pass
+    try:
+        import socket
+        return [name for _, name in socket.if_nameindex()]
+    except Exception:
+        return ["lo", "eth0"]
 
