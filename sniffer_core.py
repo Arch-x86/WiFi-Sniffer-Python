@@ -117,4 +117,50 @@ def parse_packet(pkt) -> dict:
 
     return rec
 
+class Sniffer:
+    def __init__(self, iface: Optional[str] = None, bpf: str = ""):
+        self.iface = iface
+        self.bpf = bpf
+        self.queue: queue.Queue = queue.Queue(maxsize=5000)
+        self.total = 0
+        self.dropped = 0
+        self._stop = threading.Event()
+        self._thread: Optional[threading.Thread] = None
+
+    def start(self) -> None:
+        if not SCAPY_OK:
+            raise RuntimeError("Scapy is not installed.")
+        self._stop.clear()
+        self._thread = threading.Thread(target=self._run, daemon=True, name="SnifferThread")
+        self._thread.start()
+
+    def stop(self) -> None:
+        self._stop.set()
+
+    def is_running(self) -> bool:
+        return self._thread is not None and self._thread.is_alive()
+
+    def _run(self) -> None:
+        kwargs = {"prn": self._on_packet, "store": False,
+                  "stop_filter": lambda _: self._stop.is_set()}
+        if self.iface:
+            kwargs["iface"] = self.iface
+        if self.bpf:
+            kwargs["filter"] = self.bpf
+        try:
+            sniff(**kwargs)
+        except PermissionError:
+            logger.error("Permission denied. Run with sudo/admin.")
+        except Exception as e:
+            logger.error(f"Sniffer error: {e}")
+
+    def _on_packet(self, pkt) -> None:
+        self.total += 1
+        rec = parse_packet(pkt)
+        try:
+            self.queue.put_nowait(rec)
+        except queue.Full:
+            self.dropped += 1
+            
+
 
