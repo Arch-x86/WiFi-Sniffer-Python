@@ -202,4 +202,22 @@ class App:
         self._stop()
         self.root.destroy()
 
+    def _poll(self) -> None:
+        if not self._sniffer:
+            return
+
+        for _ in range(50):   # drain up to 50 packets per tick
+            try:
+                pkt = self._sniffer.queue.get_nowait()
+            except Exception:
+                break
+            self._packets.append(pkt)
+            if self._matches_display_filter(pkt):
+                self._insert_row(pkt)
+
+        self._update_counts()
+
+        if self._sniffer.is_running():
+            self.root.after(100, self._poll)
+
 
