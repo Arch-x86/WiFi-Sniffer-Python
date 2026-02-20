@@ -79,3 +79,53 @@ class App:
         ttk.Button(bar, text="🗑 Clear", command=self._clear, width=9).pack(side=tk.LEFT, padx=2)
         ttk.Separator(bar, orient=tk.VERTICAL).pack(side=tk.LEFT, fill=tk.Y, padx=6)
         ttk.Button(bar, text="💾 Export", command=self._export, width=9).pack(side=tk.LEFT, padx=2)
+    
+    def _build_filter_bar(self) -> None:
+        bar = ttk.LabelFrame(self.root, text="Filter", padding=(6, 3))
+        bar.pack(fill=tk.X, padx=6, pady=(0, 2))
+
+        ttk.Label(bar, text="BPF:").pack(side=tk.LEFT)
+        self._bpf_var = tk.StringVar()
+        ttk.Entry(bar, textvariable=self._bpf_var, width=22).pack(side=tk.LEFT, padx=(2, 12))
+
+        ttk.Label(bar, text="Protocol:").pack(side=tk.LEFT)
+        self._proto_var = tk.StringVar()
+        ttk.Combobox(bar, textvariable=self._proto_var, width=10, state="readonly",
+                     values=["", "TCP", "UDP", "HTTP", "DNS", "ICMP", "ARP", "IPv4", "IPv6"]
+                     ).pack(side=tk.LEFT, padx=(2, 12))
+
+        ttk.Label(bar, text="Search:").pack(side=tk.LEFT)
+        self._search_var = tk.StringVar()
+        entry = ttk.Entry(bar, textvariable=self._search_var, width=18)
+        entry.pack(side=tk.LEFT, padx=(2, 8))
+        entry.bind("<Return>", lambda _: self._apply_display_filter())
+
+        ttk.Button(bar, text="Apply", command=self._apply_display_filter, width=7).pack(side=tk.LEFT, padx=2)
+        ttk.Button(bar, text="Clear", command=self._clear_display_filter, width=7).pack(side=tk.LEFT, padx=2)
+
+    def _build_packet_list(self) -> None:
+        frame = ttk.Frame(self.root)
+        frame.pack(fill=tk.BOTH, expand=True, padx=6, pady=2)
+        frame.rowconfigure(0, weight=1)
+        frame.columnconfigure(0, weight=1)
+
+        cols = [c[0] for c in COLUMNS]
+        self._tree = ttk.Treeview(frame, columns=cols, show="headings", selectmode="browse")
+
+        for col_id, heading, width in COLUMNS:
+            self._tree.heading(col_id, text=heading)
+            self._tree.column(col_id, width=width, minwidth=40, stretch=(col_id == "info"))
+
+        vsb = ttk.Scrollbar(frame, orient=tk.VERTICAL, command=self._tree.yview)
+        hsb = ttk.Scrollbar(frame, orient=tk.HORIZONTAL, command=self._tree.xview)
+        self._tree.configure(yscrollcommand=vsb.set, xscrollcommand=hsb.set)
+
+        self._tree.grid(row=0, column=0, sticky="nsew")
+        vsb.grid(row=0, column=1, sticky="ns")
+        hsb.grid(row=1, column=0, sticky="ew")
+
+        # Row colour tags
+        for proto, colour in PROTO_COLORS.items():
+            self._tree.tag_configure(proto, background=colour)
+
+        self._tree.bind("<<TreeviewSelect>>", self._on_select)
