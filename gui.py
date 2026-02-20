@@ -129,3 +129,34 @@ class App:
             self._tree.tag_configure(proto, background=colour)
 
         self._tree.bind("<<TreeviewSelect>>", self._on_select)
+    
+        menu = tk.Menu(self._tree, tearoff=False)
+        menu.add_command(label="Copy row", command=self._copy_selected)
+        menu.add_separator()
+        self._scroll_var = tk.BooleanVar(value=True)
+        menu.add_checkbutton(label="Auto-scroll", variable=self._scroll_var,
+                             command=lambda: setattr(self, "_autoscroll", self._scroll_var.get()))
+        self._tree.bind("<Button-3>", lambda e: menu.post(e.x_root, e.y_root))
+
+    def _build_detail_panel(self) -> None:
+        frame = ttk.LabelFrame(self.root, text="Packet Detail", padding=(4, 4))
+        frame.pack(fill=tk.X, padx=6, pady=(0, 2))
+
+        self._detail = tk.Text(frame, height=6, wrap=tk.WORD,
+                                font=("Courier", 9), state=tk.DISABLED,
+                                bg="#1e1e1e", fg="#d4d4d4", relief=tk.FLAT)
+        self._detail.pack(fill=tk.X)
+
+    def _build_statusbar(self) -> None:
+        bar = ttk.Frame(self.root, relief=tk.SUNKEN, padding=(6, 2))
+        bar.pack(fill=tk.X, side=tk.BOTTOM)
+
+        self._status_var = tk.StringVar(value="● Idle")
+        self._count_var = tk.StringVar(value="Captured: 0")
+        self._shown_var = tk.StringVar(value="Shown: 0")
+
+        ttk.Label(bar, textvariable=self._status_var, width=14).pack(side=tk.LEFT)
+        ttk.Separator(bar, orient=tk.VERTICAL).pack(side=tk.LEFT, fill=tk.Y, padx=6)
+        ttk.Label(bar, textvariable=self._count_var, width=14).pack(side=tk.LEFT)
+        ttk.Label(bar, textvariable=self._shown_var, width=14).pack(side=tk.LEFT)
+
