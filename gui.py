@@ -159,4 +159,47 @@ class App:
         ttk.Separator(bar, orient=tk.VERTICAL).pack(side=tk.LEFT, fill=tk.Y, padx=6)
         ttk.Label(bar, textvariable=self._count_var, width=14).pack(side=tk.LEFT)
         ttk.Label(bar, textvariable=self._shown_var, width=14).pack(side=tk.LEFT)
+    
+    def _refresh_interfaces(self) -> None:
+        ifaces = get_interfaces()
+        self._iface_combo["values"] = ifaces
+        if ifaces:
+            self._iface_var.set(ifaces[0])
+    
+    def _start(self) -> None:
+        iface = self._iface_var.get() or None
+        bpf = self._bpf_var.get().strip()
+
+        try:
+            self._sniffer = Sniffer(iface=iface, bpf=bpf)
+            self._sniffer.start()
+        except RuntimeError as e:
+            messagebox.showerror("Error", str(e))
+            return
+
+        self._btn_start.config(state=tk.DISABLED)
+        self._btn_stop.config(state=tk.NORMAL)
+        self._iface_combo.config(state=tk.DISABLED)
+        self._status_var.set("🟢 Running")
+        self._poll()
+
+    def _stop(self) -> None:
+        if self._sniffer:
+            self._sniffer.stop()
+        self._btn_start.config(state=tk.NORMAL)
+        self._btn_stop.config(state=tk.DISABLED)
+        self._iface_combo.config(state="readonly")
+        self._status_var.set("🔴 Stopped")
+
+    def _clear(self) -> None:
+        self._stop()
+        self._packets.clear()
+        self._tree.delete(*self._tree.get_children())
+        self._set_detail("")
+        self._update_counts()
+
+    def _on_close(self) -> None:
+        self._stop()
+        self.root.destroy()
+
 
