@@ -1,3 +1,3 @@
-# Main to run the whole application
-def main():
-    pass
+import argparse
+import logging
+import sys
