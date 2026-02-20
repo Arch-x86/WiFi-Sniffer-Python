@@ -48,3 +48,12 @@ class App:
 
         self._refresh_interfaces()
         self.root.protocol("WM_DELETE_WINDOW", self._on_close)
+        
+    def _apply_theme(self) -> None:
+        style = ttk.Style(self.root)
+        for name in ("clam", "alt", "default"):
+            if name in style.theme_names():
+                style.theme_use(name)
+                break
+        style.configure("Treeview", rowheight=22, font=("Courier", 9))
+        style.configure("Treeview.Heading", font=("Helvetica", 9, "bold"))
