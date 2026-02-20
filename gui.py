@@ -27,3 +27,24 @@ COLUMNS = [
     ("length",   "Len",         52),
     ("info",     "Info",       380),
 ]
+
+class App:
+    def __init__(self, root: tk.Tk) -> None:
+        self.root = root
+        self.root.title("🔍 Packet Sniffer")
+        self.root.geometry("1100x700")
+        self.root.minsize(800, 500)
+
+        self._sniffer: Optional[Sniffer] = None
+        self._packets: list[dict] = []   # master list of all captured packets
+        self._autoscroll = True
+
+        self._apply_theme()
+        self._build_toolbar()
+        self._build_filter_bar()
+        self._build_packet_list()
+        self._build_detail_panel()
+        self._build_statusbar()
+
+        self._refresh_interfaces()
+        self.root.protocol("WM_DELETE_WINDOW", self._on_close)
