@@ -57,3 +57,25 @@ class App:
                 break
         style.configure("Treeview", rowheight=22, font=("Courier", 9))
         style.configure("Treeview.Heading", font=("Helvetica", 9, "bold"))
+
+    def _build_toolbar(self) -> None:
+        bar = ttk.Frame(self.root, padding=(6, 4))
+        bar.pack(fill=tk.X)
+
+        ttk.Label(bar, text="🔍 Packet Sniffer", font=("Helvetica", 11, "bold")).pack(side=tk.LEFT, padx=(0, 12))
+        ttk.Separator(bar, orient=tk.VERTICAL).pack(side=tk.LEFT, fill=tk.Y, padx=6)
+
+        ttk.Label(bar, text="Interface:").pack(side=tk.LEFT, padx=(0, 4))
+        self._iface_var = tk.StringVar()
+        self._iface_combo = ttk.Combobox(bar, textvariable=self._iface_var, width=16, state="readonly")
+        self._iface_combo.pack(side=tk.LEFT, padx=(0, 10))
+
+        self._btn_start = ttk.Button(bar, text="▶ Start", command=self._start, width=9)
+        self._btn_start.pack(side=tk.LEFT, padx=2)
+
+        self._btn_stop = ttk.Button(bar, text="⏹ Stop", command=self._stop, width=9, state=tk.DISABLED)
+        self._btn_stop.pack(side=tk.LEFT, padx=2)
+
+        ttk.Button(bar, text="🗑 Clear", command=self._clear, width=9).pack(side=tk.LEFT, padx=2)
+        ttk.Separator(bar, orient=tk.VERTICAL).pack(side=tk.LEFT, fill=tk.Y, padx=6)
+        ttk.Button(bar, text="💾 Export", command=self._export, width=9).pack(side=tk.LEFT, padx=2)
