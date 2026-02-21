@@ -15,3 +15,12 @@ def main():
         level=logging.DEBUG if args.debug else logging.INFO,
         format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
     )
+
+     # ── Run tests ──────────────────────────────────────────────────────────
+    if args.test:
+        import unittest
+        loader = unittest.TestLoader()
+        suite = loader.loadTestsFromName("tests")
+        runner = unittest.TextTestRunner(verbosity=2)
+        result = runner.run(suite)
+        sys.exit(0 if result.wasSuccessful() else 1)
