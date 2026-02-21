@@ -15,6 +15,15 @@ A python-based tool to sniff the packet transmitting over the network.
 - Practice building GUI-based networking tools using Python and Tkinter
 
 ## Project Structure
+packet-sniffer
+│
+├── main.py
+├── gui.py 
+├── sniffer_core.py 
+├── ip-viewer.py 
+│
+├── requirements.txt 
+└── README.md
 
 ## Quick Start
 
