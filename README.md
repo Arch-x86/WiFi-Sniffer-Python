@@ -1,8 +1,7 @@
 # Wifi Sniffer Tool
 ## Overview
-A python-based tool to sniff the packet transmitting over the network. 
-
-
+A python-based tool to sniff the packet transmitting over the network.
+ 
 > [!WARNING]
 > This project is developed strictly for educational and research purposes. It is intended to demonstrate how network packet analysis works and to help understand network security concepts.
 
@@ -15,15 +14,17 @@ A python-based tool to sniff the packet transmitting over the network.
 - Practice building GUI-based networking tools using Python and Tkinter
 
 ## Project Structure
-packet-sniffer
-│
+## Project Structure
+
+```text
+packet-sniffer/
 ├── main.py
-├── gui.py 
-├── sniffer_core.py 
-├── ip-viewer.py 
-│
-├── requirements.txt 
+├── gui.py
+├── sniffer_core.py
+├── ip-viewer.py
+├── requirements.txt
 └── README.md
+```
 
 ## Quick Start
 
