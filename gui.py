@@ -220,4 +220,76 @@ class App:
         if self._sniffer.is_running():
             self.root.after(100, self._poll)
 
+    def _matches_display_filter(self, pkt: dict) -> bool:
+        proto = self._proto_var.get()
+        keyword = self._search_var.get().strip().lower()
+
+        if proto and pkt.get("protocol", "") != proto:
+            return False
+        if keyword:
+            haystack = " ".join(str(v) for v in pkt.values()).lower()
+            if keyword not in haystack:
+                return False
+        return True
+
+    def _apply_display_filter(self) -> None:
+        self._tree.delete(*self._tree.get_children())
+        for pkt in self._packets:
+            if self._matches_display_filter(pkt):
+                self._insert_row(pkt)
+        self._update_counts()
+
+    def _clear_display_filter(self) -> None:
+        self._proto_var.set("")
+        self._search_var.set("")
+        self._apply_display_filter()
+
+    # ------------------------------------------------------------------
+    # Treeview helpers
+    # ------------------------------------------------------------------
+
+    def _insert_row(self, pkt: dict) -> None:
+        tag = pkt.get("protocol", "OTHER")
+        iid = self._tree.insert("", tk.END, tags=(tag,), values=(
+            pkt["time"], pkt["protocol"],
+            pkt["src"], pkt["dst"],
+            pkt["length"], pkt["info"],
+        ))
+        if self._autoscroll:
+            self._tree.see(iid)
+
+    def _on_select(self, _=None) -> None:
+        sel = self._tree.selection()
+        if not sel:
+            return
+        row_idx = self._tree.index(sel[0])  # position in visible tree
+        # Find the matching packet in filtered list
+        visible = [p for p in self._packets if self._matches_display_filter(p)]
+        if row_idx < len(visible):
+            self._show_detail(visible[row_idx])
+
+    def _show_detail(self, pkt: dict) -> None:
+        lines = [f"  {k:<10}: {v}" for k, v in pkt.items() if v not in (None, "")]
+        self._set_detail("\n".join(lines))
+
+    def _set_detail(self, text: str) -> None:
+        self._detail.config(state=tk.NORMAL)
+        self._detail.delete("1.0", tk.END)
+        self._detail.insert(tk.END, text)
+        self._detail.config(state=tk.DISABLED)
+
+    def _copy_selected(self) -> None:
+        sel = self._tree.selection()
+        if sel:
+            vals = self._tree.item(sel[0])["values"]
+            self.root.clipboard_clear()
+            self.root.clipboard_append("\t".join(str(v) for v in vals))
+
+    def _update_counts(self) -> None:
+        total = len(self._packets)
+        shown = len(self._tree.get_children())
+        self._count_var.set(f"Captured: {total:,}")
+        self._shown_var.set(f"Shown: {shown:,}")
+        
+
 
