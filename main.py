@@ -61,3 +61,19 @@ def main():
             sniffer.stop()
 
         return
+    
+      # ── GUI mode ───────────────────────────────────────────────────────────
+    try:
+        import tkinter as tk
+    except ImportError:
+        print("tkinter not available. Install it (e.g. sudo apt install python3-tk)")
+        sys.exit(1)
+
+    from gui import App
+    root = tk.Tk()
+    App(root)
+    root.mainloop()
+
+
+if __name__ == "__main__":
+    main()
