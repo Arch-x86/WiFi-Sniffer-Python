@@ -290,6 +290,30 @@ class App:
         shown = len(self._tree.get_children())
         self._count_var.set(f"Captured: {total:,}")
         self._shown_var.set(f"Shown: {shown:,}")
-        
+    
+    def _export(self) -> None:
+        if not self._packets:
+            messagebox.showinfo("Export", "Nothing to export yet.")
+            return
+
+        path = filedialog.asksaveasfilename(
+            defaultextension=".json",
+            filetypes=[("JSON", "*.json"), ("CSV", "*.csv")],
+        )
+        if not path:
+            return
+
+        try:
+            if path.endswith(".csv"):
+                with open(path, "w", newline="", encoding="utf-8") as f:
+                    w = csv.DictWriter(f, fieldnames=self._packets[0].keys())
+                    w.writeheader()
+                    w.writerows(self._packets)
+            else:
+                with open(path, "w", encoding="utf-8") as f:
+                    json.dump(self._packets, f, indent=2)
+            messagebox.showinfo("Export", f"Saved {len(self._packets):,} packets to:\n{path}")
+        except Exception as e:
+            messagebox.showerror("Export Error", str(e))
 
 
