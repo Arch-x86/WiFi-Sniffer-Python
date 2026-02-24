@@ -39,7 +39,25 @@ pip install -r requirements.txt
 # run the applicaiton
 python3 main.py
 ```
-
+## Steps to take for the program to run.
+```text
+When the interface is shown after running. you have to enter your network interface. There are several options shoen in the netwrok interface box. 
+SO to identify what is your network interface. Follow these steps:
+1. open the powersehll,
+2. Run the command ipconfig
+3.look for your IPv4 Address
+4.after finding your IPv4 address 
+5.Open the VS code and run the ip-viewer.py 
+6.It wil show all the interfaces in your device
+7.match the IPv4 address with the ip of interface.
+8.The matching interface will have exact ip.
+9.look at the interface name of that ip 
+10.The interface name will be inside {}.eg {D35E3520-B9CE-41E0-8940-0E11591F7DB7}
+11. run the main.py and look for the first 4 letters of interface. Eg {D35E....}
+12.choose it 
+13.select the protocal 
+14. click on start button.
+```
 
 ## Author
 - **Ankit Thebe** - Initial Demonstration
