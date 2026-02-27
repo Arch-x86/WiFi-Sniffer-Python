@@ -13,7 +13,7 @@ A python-based tool to sniff the packet transmitting over the network.
 - Understand ethical considerations in network security testing
 - Practice building GUI-based networking tools using Python and Tkinter
 
-## Project Structure
+
 ## Project Structure
 
 ```text
