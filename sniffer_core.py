@@ -22,7 +22,6 @@ SERVICES = {
 TCP_FLAGS = {"F": "FIN", "S": "SYN", "R": "RST", "P": "PSH", "A": "ACK", "U": "URG"}
 
 def parse_packet(pkt) -> dict:
-    """Convert a raw Scapy packet into a plain dict."""
     now = datetime.now(timezone.utc).strftime("%H:%M:%S.%f")[:-3]
     rec = {
         "time": now,
